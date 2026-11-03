@@ -42,8 +42,8 @@ import java.util.List;
  */
 public class PoissonDiscChunkSet {
 
-    private byte[] discData;
-    public boolean generated = false;
+    private volatile byte[] discData;
+    public volatile boolean generated = false;
 
     public PoissonDiscChunkSet() {
         discData = new byte[16];
