@@ -6,6 +6,8 @@ import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Harley O'Connor
@@ -15,8 +17,8 @@ public final class JoCodeRegistry {
     private JoCodeRegistry() {
     }
 
-    private static final Map<ResourceLocation, Map<Integer, List<JoCode>>> CODES = new HashMap<>();
-    private static final Map<ResourceLocation, Map<Integer, List<JoCode>>> ROOTS_CODES = new HashMap<>();
+    private static final Map<ResourceLocation, Map<Integer, List<JoCode>>> CODES = new ConcurrentHashMap<>();
+    private static final Map<ResourceLocation, Map<Integer, List<JoCode>>> ROOTS_CODES = new ConcurrentHashMap<>();
 
     public static void clear() {
         CODES.clear();
@@ -24,13 +26,13 @@ public final class JoCodeRegistry {
     }
 
     public static void register(ResourceLocation speciesName, int radius, JoCode code) {
-        CODES.computeIfAbsent(speciesName, s -> new HashMap<>())
-                .computeIfAbsent(radius, r -> new ArrayList<>()).add(code);
+        CODES.computeIfAbsent(speciesName, s -> new ConcurrentHashMap<>())
+                .computeIfAbsent(radius, r -> new CopyOnWriteArrayList<>()).add(code);
     }
 
     public static void registerRoot(ResourceLocation speciesName, int radius, RootsJoCode code) {
-        ROOTS_CODES.computeIfAbsent(speciesName, s -> new HashMap<>())
-                .computeIfAbsent(radius, r -> new ArrayList<>()).add(code);
+        ROOTS_CODES.computeIfAbsent(speciesName, s -> new ConcurrentHashMap<>())
+                .computeIfAbsent(radius, r -> new CopyOnWriteArrayList<>()).add(code);
     }
 
     /**
