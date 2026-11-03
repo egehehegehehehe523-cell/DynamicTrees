@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LevelPoissonDiscProvider implements PoissonDiscProvider {
 
     private final RadiusCoordinator radiusCoordinator;
-    private final Map<ChunkPos, PoissonDiscChunkSet> chunkDiscs;
+    private final ConcurrentHashMap<ChunkPos, PoissonDiscChunkSet> chunkDiscs;
     private RandomXOR random = new RandomXOR();
     private PoissonDebug debug = PoissonDebug.EMPTY_POISSON_DEBUG;
 
@@ -257,16 +257,7 @@ public class LevelPoissonDiscProvider implements PoissonDiscProvider {
 
     private PoissonDiscChunkSet getChunkDiscSet(int chunkX, int chunkZ) {
         final ChunkPos key = new ChunkPos(chunkX, chunkZ);
-        final PoissonDiscChunkSet cSet;
-
-        if (this.chunkDiscs.containsKey(key)) {
-            cSet = this.chunkDiscs.get(key);
-        } else {
-            cSet = new PoissonDiscChunkSet();
-            this.chunkDiscs.put(key, cSet);
-        }
-
-        return cSet;
+        return this.chunkDiscs.computeIfAbsent(key, k -> new PoissonDiscChunkSet());
     }
 
     @Override
